@@ -1,21 +1,22 @@
 
 resource "aws_vpc" "db_server_vpc" {
-  cidr_block         = "13.0.0.0/28"
+  cidr_block         = "10.0.0.0/22"
   enable_dns_support = true
 }
 
 resource "aws_subnet" "public_subnet" {
-  vpc_id     = aws_vpc.db_server_vpc.id
-  cidr_block = "13.0.0.0/29"
+  vpc_id                  = aws_vpc.db_server_vpc.id
+  cidr_block              = "10.0.1.0/25"
+  map_public_ip_on_launch = true
 
   tags = {
-    Name = "dbserver"
+    Name = "pub-sub-dbserver"
   }
 }
 
 resource "aws_subnet" "db_private_subnet" {
   vpc_id     = aws_vpc.db_server_vpc.id
-  cidr_block = "13.0.0.0/29"
+  cidr_block = "10.0.1.128/25"
 
   tags = {
     Name = "dbserver"
