@@ -4,9 +4,18 @@ resource "aws_vpc" "db_server_vpc" {
   enable_dns_support = true
 }
 
-resource "aws_subnet" "db_server_subnet" {
+resource "aws_subnet" "public_subnet" {
   vpc_id     = aws_vpc.db_server_vpc.id
-  cidr_block = "13.0.0.0/28"
+  cidr_block = "13.0.0.0/29"
+
+  tags = {
+    Name = "dbserver"
+  }
+}
+
+resource "aws_subnet" "db_private_subnet" {
+  vpc_id     = aws_vpc.db_server_vpc.id
+  cidr_block = "13.0.0.0/29"
 
   tags = {
     Name = "dbserver"
@@ -31,7 +40,7 @@ resource "aws_route_table" "dbroute" {
   }
 }
 resource "aws_route_table_association" "db_server_association" {
-  subnet_id      = aws_subnet.db_server_subnet.id
+  subnet_id      = aws_subnet.public_subnet.id
   route_table_id = aws_route_table.dbroute.id
 }
 resource "aws_security_group" "allow_tls" {
@@ -49,5 +58,15 @@ resource "aws_security_group" "allow_tls" {
 
   tags = {
     Name = "db_allow_tls"
+  }
+}
+
+resource "aws_instance" "db_instance" {
+  ami           = var.ami_id
+  instance_type = var.instance_type
+  subnet_id     = aws_subnet.db_private_subnet.id
+
+  tags = {
+    Name = "db_server"
   }
 }
