@@ -32,5 +32,5 @@ module "db_instance" {
   ec2_sg               = module.ec2_private.ec2_sg
   subnet_ids           = module.vpc.private_subnet_ids
   security_group_id    = module.ec2_private.ec2_sg
-  db_subnet_group_name = module.vpc.private_subnet_ids
+  db_subnet_group_name = module.vpc.private_subnet_ids[0]
 }

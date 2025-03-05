@@ -33,6 +33,7 @@ resource "aws_db_subnet_group" "subnet_group" {
 }
 # DB instance
 resource "aws_db_instance" "rds" {
+  identifier             = "ec2tords"
   allocated_storage      = var.allocated_storage
   storage_type           = "gp2"
   db_name                = var.db_name
@@ -44,6 +45,9 @@ resource "aws_db_instance" "rds" {
   publicly_accessible    = true
   skip_final_snapshot    = true
   vpc_security_group_ids = [aws_security_group.rds_sg.id]
-  db_subnet_group_name   = var.db_subnet_group_name
+  db_subnet_group_name   = aws_db_subnet_group.subnet_group.name
+  tags = {
+    Name = "rds"
+  }
 }
 
